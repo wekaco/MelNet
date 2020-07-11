@@ -4,6 +4,7 @@ import logging
 import argparse
 import platform
 
+from utils.bucket import preload_dataset
 from utils.experiment import Experiment
 from utils.train import train
 from utils.hparams import HParam
@@ -13,7 +14,9 @@ from datasets.wavloader import create_dataloader
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-k', '--key', type=str, required=False, default=None,
+    parser.add_argument('--bucket', type=str, required=False, default=None,
+                        help="google cloud storage bucket name")
+    parser.add_argument('--comet_key', type=str, required=False, default=None,
                         help="comet.ml api key")
     parser.add_argument('-c', '--config', type=str, required=True,
                         help="yaml file for configuration")
@@ -61,10 +64,14 @@ if __name__ == '__main__':
 
     assert hp.data.path != '', \
         'hp.data.path cannot be empty: please fill out your dataset\'s path in configuration yaml file.'
+
+    if args.bucket:
+        preload_dataset(args.bucket, hp.data.path)
+
     trainloader = create_dataloader(hp, args, train=True)
     testloader = create_dataloader(hp, args, train=False)
 
-    experiment = Experiment(api_key=args.key, project_name='MelNet')
+    experiment = Experiment(api_key=args.comet_key, project_name='MelNet')
     experiment.log_parameters(hp)
 
     train(args, pt_dir, args.checkpoint_path, trainloader, testloader, writer, logger, hp, hp_str, experiment)

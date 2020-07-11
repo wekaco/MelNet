@@ -13,6 +13,7 @@ from model.tts import TTS
 from model.loss import GMMLoss
 from .utils import get_commit_hash
 from .audio import MelGen
+from .bucket import upload_model
 from .tierutil import TierUtil
 from .constant import f_div, t_div
 from .validation import validate
@@ -139,6 +140,9 @@ def train(args, pt_dir, chkpt_path, trainloader, testloader, writer, logger, hp,
 
             experiment.log_epoch_end(epoch, step)
             validate(args, model, melgen, tierutil, testloader, criterion, writer, step, epoch, experiment)
+
+            if args.bucket:
+                upload_model(args.bucket, save_path)
 
     except Exception as e:
         logger.info("Exiting due to exception: %s" % e)
