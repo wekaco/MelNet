@@ -14,6 +14,8 @@ from datasets.wavloader import create_dataloader
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--save_interval', type=int, required=False, default=1,
+                        help="interval of epochs for models persistance")
     parser.add_argument('--bucket', type=str, required=False, default=None,
                         help="google cloud storage bucket name")
     parser.add_argument('--comet_key', type=str, required=False, default=None,

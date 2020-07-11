@@ -126,24 +126,26 @@ def train(args, pt_dir, chkpt_path, trainloader, testloader, writer, logger, hp,
                     logger.error("Loss exploded to %.04f at step %d!" % (loss, step))
                     raise Exception("Loss exploded")
 
-            save_path = os.path.join(pt_dir, '%s_%s_tier%d_%03d.pt'
-            % (args.name, experiment.id, args.tier, epoch))
-            torch.save({
-                'model': model.state_dict(),
-                'optimizer': optimizer.state_dict(),
-                'step': step,
-                'epoch': epoch,
-                'hp_str': hp_str,
-                'githash': githash,
-                'exp_id': experiment.id,
-            }, save_path)
-            logger.info("Saved checkpoint to: %s" % save_path)
+            if epoch % args.save_interval == 0:
+                save_path = os.path.join(pt_dir, '%s_%s_tier%d_%03d.pt'
+                % (args.name, experiment.id, args.tier, epoch))
+                torch.save({
+                    'model': model.state_dict(),
+                    'optimizer': optimizer.state_dict(),
+                    'step': step,
+                    'epoch': epoch,
+                    'hp_str': hp_str,
+                    'githash': githash,
+                    'exp_id': experiment.id,
+                }, save_path)
+                logger.info("Saved checkpoint to: %s" % save_path)
+
+                if args.bucket:
+                    upload_model(args.bucket, save_path)
 
             experiment.log_epoch_end(epoch, step)
             validate(args, model, melgen, tierutil, testloader, criterion, writer, step, epoch, experiment)
 
-            if args.bucket:
-                upload_model(args.bucket, save_path)
 
     except Exception as e:
         logger.info("Exiting due to exception: %s" % e)
