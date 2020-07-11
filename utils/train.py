@@ -18,7 +18,7 @@ from .constant import f_div, t_div
 from .validation import validate
 
 
-def train(args, pt_dir, chkpt_path, trainloader, testloader, writer, logger, hp, hp_str):
+def train(args, pt_dir, chkpt_path, trainloader, testloader, writer, logger, hp, hp_str, experiment):
     if args.tts:
         model = TTS(
             hp=hp,
@@ -137,7 +137,8 @@ def train(args, pt_dir, chkpt_path, trainloader, testloader, writer, logger, hp,
             }, save_path)
             logger.info("Saved checkpoint to: %s" % save_path)
 
-            validate(args, model, melgen, tierutil, testloader, criterion, writer, step)
+            experiment.log_epoch_end(epoch, step)
+            validate(args, model, melgen, tierutil, testloader, criterion, writer, step, epoch, experiment)
 
     except Exception as e:
         logger.info("Exiting due to exception: %s" % e)

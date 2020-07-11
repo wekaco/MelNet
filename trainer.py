@@ -4,6 +4,7 @@ import logging
 import argparse
 import platform
 
+from utils.experiment import Experiment
 from utils.train import train
 from utils.hparams import HParam
 from utils.writer import MyWriter
@@ -12,6 +13,8 @@ from datasets.wavloader import create_dataloader
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('-k', '--key', type=str, required=False, default=None,
+                        help="comet.ml api key")
     parser.add_argument('-c', '--config', type=str, required=True,
                         help="yaml file for configuration")
     parser.add_argument('-p', '--checkpoint_path', type=str, default=None,
@@ -61,4 +64,7 @@ if __name__ == '__main__':
     trainloader = create_dataloader(hp, args, train=True)
     testloader = create_dataloader(hp, args, train=False)
 
-    train(args, pt_dir, args.checkpoint_path, trainloader, testloader, writer, logger, hp, hp_str)
+    experiment = Experiment(api_key=args.key, project_name='MelNet')
+    experiment.log_parameters(hp)
+
+    train(args, pt_dir, args.checkpoint_path, trainloader, testloader, writer, logger, hp, hp_str, experiment)

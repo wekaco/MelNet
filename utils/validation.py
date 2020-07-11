@@ -7,7 +7,7 @@ from tqdm import tqdm
 from .gmm import sample_gmm
 
 
-def validate(args, model, melgen, tierutil, testloader, criterion, writer, step):
+def validate(args, model, melgen, tierutil, testloader, criterion, writer, step, epoch, experiment):
     model.eval()
     # torch.backends.cudnn.benchmark = False
 
@@ -46,6 +46,7 @@ def validate(args, model, melgen, tierutil, testloader, criterion, writer, step)
         else:
             alignment = None
         writer.log_validation(test_loss, source, target, result, alignment, step)
+        experiment.log_metric('validation_loss', test_loss.item(), step=step, epoch=epoch)
 
     model.train()
     # torch.backends.cudnn.benchmark = True
