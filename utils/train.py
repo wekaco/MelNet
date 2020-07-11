@@ -127,7 +127,7 @@ def train(args, pt_dir, chkpt_path, trainloader, testloader, writer, logger, hp,
                     raise Exception("Loss exploded")
 
             save_path = os.path.join(pt_dir, '%s_%s_tier%d_%03d.pt'
-            % (args.name, githash, args.tier, epoch))
+            % (args.name, experiment.id, args.tier, epoch))
             torch.save({
                 'model': model.state_dict(),
                 'optimizer': optimizer.state_dict(),
@@ -135,6 +135,7 @@ def train(args, pt_dir, chkpt_path, trainloader, testloader, writer, logger, hp,
                 'epoch': epoch,
                 'hp_str': hp_str,
                 'githash': githash,
+                'exp_id': experiment.id,
             }, save_path)
             logger.info("Saved checkpoint to: %s" % save_path)
 
