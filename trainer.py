@@ -4,7 +4,7 @@ import logging
 import argparse
 import platform
 
-from utils.bucket import preload_dataset
+from utils.bucket import download_config, preload_dataset
 from utils.experiment import Experiment
 from utils.train import train
 from utils.hparams import HParam
@@ -33,6 +33,9 @@ if __name__ == '__main__':
     parser.add_argument('-s', '--tts', type=bool, default=False, required=False,
                         help="TTS")
     args = parser.parse_args()
+
+    if args.bucket and not os.path.isfile(args.config):
+        download_config(args.bucket, args.config)
 
     hp = HParam(args.config)
     with open(args.config, 'r') as f:

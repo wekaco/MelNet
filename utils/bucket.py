@@ -12,6 +12,12 @@ def _get_client_bucket(name: str) -> Tuple[Client, Bucket]:
     return (client, bucket)
 
 
+def download_config(bucket_name: str, data_path: str):
+    (_, bucket) = _get_client_bucket(bucket_name)
+    blob = bucket.blob(data_path)
+    blob.download_to_filename(data_path)
+
+
 def preload_dataset(bucket_name: str, data_path: str) -> str:
     # ensure_dir_exists
     if not os.path.exists(data_path):
@@ -24,6 +30,7 @@ def preload_dataset(bucket_name: str, data_path: str) -> str:
         blob.download_to_filename(blob.name)
 
     return os.path.abspath(data_path)
+
 
 def upload_model(bucket_name: str, save_path: str):
     name = save_path.replace(os.path.abspath(os.curdir) + '/', '')
