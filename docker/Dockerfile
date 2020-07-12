@@ -13,17 +13,13 @@ RUN apt-get update && apt-get install -y \
     git \
     bzip2 \
     libx11-6 \
+    sox \
+    ffmpeg \
  && rm -rf /var/lib/apt/lists/*
-
-# Install audio utilities
-# RUN apt-get update && apt-get install -y \
-#     sox \ 
-#   && rm -rf /var/lib/apt/lists/*
 
 # Create a working directory
 RUN mkdir /app
 WORKDIR /app
-
 
 # Create a non-root user and switch to it
 RUN adduser --disabled-password --gecos '' --shell /bin/bash user \
@@ -52,15 +48,8 @@ ENV CONDA_DEFAULT_ENV=py36
 ENV CONDA_PREFIX=/home/user/miniconda/envs/$CONDA_DEFAULT_ENV
 ENV PATH=$CONDA_PREFIX/bin:$PATH
 
+RUN pip install --no-cache-dir torch==1.3.0
+
 # pip install requirements
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
-
-USER root
-RUN apt-get update && apt-get install -y \
-    sox \ 
-  && rm -rf /var/lib/apt/lists/*
-
-RUN pip install --no-cache-dir jamo
-RUN pip install --no-cache-dir future
-
