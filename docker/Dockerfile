@@ -53,3 +53,13 @@ RUN pip install --no-cache-dir torch==1.3.0
 # pip install requirements
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
+
+COPY --chown=user:user LICENSE /app/LICENSE
+COPY --chown=user:user config /app/config
+COPY --chown=user:user README.md /app/README.md
+COPY --chown=user:user datasets /app/datasets
+COPY --chown=user:user inference.py /app/inference.py
+COPY --chown=user:user model /app/model
+COPY --chown=user:user text /app/text
+COPY --chown=user:user trainer.py /app/trainer.py
+COPY --chown=user:user utils /app/utils
