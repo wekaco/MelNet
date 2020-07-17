@@ -48,9 +48,10 @@ ENV CONDA_DEFAULT_ENV=py36
 ENV CONDA_PREFIX=/home/user/miniconda/envs/$CONDA_DEFAULT_ENV
 ENV PATH=$CONDA_PREFIX/bin:$PATH
 
-RUN pip install --no-cache-dir torch==1.3.0
+RUN conda install pytorch==1.2.0 torchvision==0.4.0 cudatoolkit=10.0 -c pytorch \
+  && conda clean -ya
 
-# pip install requirements
+# Install requirements
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
