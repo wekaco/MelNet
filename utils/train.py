@@ -119,6 +119,7 @@ def train(args, pt_dir, chkpt_path, trainloader, testloader, writer, logger, hp,
                     if step % hp.log.summary_interval == 0:
                         writer.log_training(loss_sum, step)
                         loader.set_description("Loss %.04f at step %d" % (loss_sum, step))
+                        experiment.log_metric("loss", loss_sum, step, epoch)
                     loss_sum = 0
 
                 loss = loss.item()

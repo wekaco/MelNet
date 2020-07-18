@@ -10,7 +10,13 @@ class Experiment():
         self._exp = None
         self._id = uuid4().hex
         if api_key:
-            self._exp = CometExperiment(api_key, log_code=False, **kwargs)
+            self._exp = CometExperiment(
+                api_key,
+                log_code=False,
+                auto_param_logging=False,
+                auto_metric_logging=False,
+                **kwargs
+            )
             self._id = self._exp.get_key()
 
     def log_metric(self, name, value, step=None, epoch=None):
