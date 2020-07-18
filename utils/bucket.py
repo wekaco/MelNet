@@ -1,4 +1,5 @@
 import os
+import random
 
 from typing import Tuple
 
@@ -18,7 +19,7 @@ def download_config(bucket_name: str, data_path: str):
     blob.download_to_filename(data_path)
 
 
-def preload_dataset(bucket_name: str, data_path: str) -> str:
+def preload_dataset(bucket_name: str, data_path: str, sample_threshold: int) -> str:
     # ensure_dir_exists
     if not os.path.exists(data_path):
         os.makedirs(data_path)
@@ -26,6 +27,11 @@ def preload_dataset(bucket_name: str, data_path: str) -> str:
     (storage_client, bucket) = _get_client_bucket(bucket_name)
 
     dataset = storage_client.list_blobs(bucket, prefix=data_path)
+
+    if sample_threshold > 0:
+        random.seed(123)
+        dataset = random.sample(list(dataset), k=sample_threshold)
+
     for blob in dataset:
         blob.download_to_filename(blob.name)
 

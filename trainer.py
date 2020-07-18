@@ -14,6 +14,8 @@ from datasets.wavloader import create_dataloader
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--sample_threshold', type=int, required=False, default=0,
+                        help="number of samples to load from bucket")
     parser.add_argument('--save_interval', type=int, required=False, default=1,
                         help="interval of epochs for models persistance")
     parser.add_argument('--bucket', type=str, required=False, default=None,
@@ -71,7 +73,7 @@ if __name__ == '__main__':
         'hp.data.path cannot be empty: please fill out your dataset\'s path in configuration yaml file.'
 
     if args.bucket:
-        preload_dataset(args.bucket, hp.data.path)
+        preload_dataset(args.bucket, hp.data.path, args.sample_threshold)
 
     trainloader = create_dataloader(hp, args, train=True)
     testloader = create_dataloader(hp, args, train=False)
